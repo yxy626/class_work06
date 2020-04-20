@@ -1,0 +1,72 @@
+一、
+1. ODBC
+    ODBC：开放式数据库互连（Open Database Connectivity），是微软公司推出的一种实现应用程序和关系数据库之间通讯的方法标准，是一个接口标准。所以它实际上是一种标准，符合标准的数据库就可以通过SQL语言编写的命令对数据库进行操作，但只能针对关系数据库进行操作（如SQL Server，Oracle，Access，Excel等），目前所有的关系数据库都符合该标准。ODBC本质上是一组数据库访问API（应用程序编程接口），由一组函数调用组成，核心是SQL语句。
+2.DAO
+   DAO：数据库访问对象（Database Access Object），所谓数据访问对象，顾名思义就是与数据库打交道，夹在业务逻辑层与数据资源层之间。是Microsoft一种用来访问Jet引擎的方法，主要适用于单系统应用程序或在小范围本地分布使用，访问所谓桌面数据库（如Access、FoxPro、dBase等）。DAO在设计时是专门用来处理MDB数据库的，由于其内部已经对Jet数据库的访问进行了加速优化，因此访问Access数据库时性能很好，也很方便，所以如果数据库是Access数据库且是本地使用的话，建议使用这种访问方式。它也可以通过ODBC访问远程数据库，但效率较低，一般不采用这种方式。它是第一个面向对象的数据库访问接口。DAO可以访问非关系型数据库。
+3. RDO
+  RDO：远程数据库对象（Remote Database Object）。为了弥补DAO访问远程数据库能力的不足，微软推出了RDO数据库访问接口，可以方便的用来访问远程数据库（网络数据库）。它封装了ODBC API的对象层，因此在访问ODBC兼容数据库时，具有比DAO更高的性能，而且比ODBC更易用。但同样由于这种和ODBC紧密的结合，使得它只能以ODBC的方式访问关系型数据库，同时也在访问Jet或ISAM数据库方面受到限制，而且无法访问非关系型数据库（？）。RDO提供了访问存储过程和复杂结果集的更多和更复杂的对象、属性以及方法，但它只是从DAO向ADO迈进的一个过度产品，在大多数情况下，ADO的性能都要优于它。
+4.OLE DB
+OLE DB：数据库链接和嵌入对象（Object Linking and Embedding DataBase）。OLE DB是微软提出的基于COM思想且面向对象的一种技术标准，目的是提供一种统一的数据访问接口访问各种数据源，这里所说的"数据"除了标准的关系型数据库中的数据之外，还包括邮件数据、Web上的文本或图形、目录服务(Directory Services)、以及主机系统中的文件和地理数据以及自定义业务对象等。OLE DB标准的核心内容就是要求对以上这些各种各样的数据存储(Data Store)都提供一种相同的访问接口，使得数据的使用者(应用程序)可以使用同样的方法访问各种数据，而不用考虑数据的具体存储地点、格式或类型。
+二、
+三、
+1.phmysql
+
+import pymysql
+# 创建连接
+
+conn = pymysql.connect(host='127.0.0.1', port=3306, user='root', passwd='', db='tkq1', charset='utf8')
+# 创建游标
+
+cursor = conn.cursor()
+# 执行SQL，并返回收影响行数
+
+effect_row = cursor.execute("select * from tb7")
+# 执行SQL，并返回受影响行数
+#
+effect_row = cursor.execute("update tb7 set pass = '123' where nid = %s", (11,))
+# 执行SQL，并返回受影响行数,执行多次
+#
+effect_row = cursor.executemany("insert into tb7(user,pass,licnese)values(%s,%s,%s)", [("u1","u1pass","11111"),("u2","u2pass","22222")])
+# 提交，不然无法保存新建或者修改的数据
+
+conn.commit()
+# 关闭游标
+
+cursor.close()
+# 关闭连接
+
+conn.close(）
+2. mysql
+
+import mysql.connector
+ 
+
+mydb = mysql.connector.connect(
+  
+	host="localhost",
+  
+	user="root",
+  
+	passwd="root",
+  
+	database="公交站点测试"
+)
+ 
+
+mycursor = mydb.cursor()
+ 
+
+# sql = "UPDATE customers SET address = %s WHERE address = %s"
+
+# val = ("Valley 345", "Canyon 123")
+
+# mcuyrsor.execute(sql, val)
+
+sql = 'update 站点标注汇总 set routename_BK=right(routename,LENGTH(routename)-1) where left(routename,1)="B"'
+mycursor.execute(sql)
+ 
+
+mydb.commit()
+
+ 
+print(mycursor.rowcount, " 条记录已更新")
